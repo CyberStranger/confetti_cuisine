@@ -1,6 +1,6 @@
 const { model, Schema } = require('mongoose');
 
-subscriberSchema =new Schema({
+subscriberSchema = new Schema({
     name: {
         type: String,
         required: true
@@ -17,17 +17,19 @@ subscriberSchema =new Schema({
         min: [10000, 'Zip code is too short'],
         max: 99999
     },
-    courses: [{type: Schema.Types.ObjectId, ref: 'Course'}]
+    courses: [{ type: Schema.Types.ObjectId, ref: 'Course' }]
+}, {
+    timestamps: true
 });
 
-subscriberSchema.methods.getInfo = function() {
-    return `Name: ${this.name} 
-        Email: ${this.email} Zip Code: ${this.zipCode}`;
+subscriberSchema.methods.getInfo = function () {
+    return `Name: ${this.name} Email: ${this.email} 
+    Zip Code: ${this.zipCode}`;
 };
 
-subscriberSchema.methods.findLocalSubscribers = async function() {
+subscriberSchema.methods.findLocalSubscribers = async function () {
     return await this.model('Subscriber')
-        .find({zipCode: this.zipCode});
+        .find({ zipCode: this.zipCode });
 }
 
 module.exports = model('Subscriber', subscriberSchema);

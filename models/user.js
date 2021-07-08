@@ -21,7 +21,8 @@ const mongoose = require('mongoose'),
         },
         zipCode: {
             type: Number,
-            min: [10000, 'Zip code too short']
+            min: [10000, 'Zip code too short'],
+            max: 99999
         },
         password: {
             type: String,
