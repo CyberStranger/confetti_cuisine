@@ -43,9 +43,13 @@ router.delete('/users/:id/delete', usersController.delete, usersController.redir
 
 router.get('/courses', homeController.showCourses);
 
-router.get('/subscribers', subscribersController.getAllSubscribers);
-router.get('/contact', subscribersController.getSubscriptionPage);
-router.post('/subscribe', subscribersController.saveSubscriber);
+router.get('/subscribers', subscribersController.index, subscribersController.indexView);
+router.get('/subscribers/new', subscribersController.new);
+router.post('/subscribers/create', subscribersController.create, subscribersController.redirectView);
+router.get('/subscribers/:id', subscribersController.show, subscribersController.showView);
+router.get('/subscribers/:id/edit', subscribersController.edit);
+router.put('/subscribers/:id/update', subscribersController.update, subscribersController.redirectView);
+router.delete('/subscribers/:id/delete', subscribersController.delete, subscribersController.redirectView);
 
 app.use(errorController.pageNotFoundError);
 app.use(errorController.internalServerError);
