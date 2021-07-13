@@ -32,6 +32,10 @@ router.use(expressSession({
     saveUninitialized: false
 }));
 router.use(connectFlash());
+router.use((req, res, next) => {
+    res.locals.flashMessages = req.flash();
+    next();
+});
 
 app.set('port', process.env.port || 3000);
 app.set('view engine', 'ejs');
@@ -47,9 +51,9 @@ app.get('/', (req, res) => {
 });
 
 router.get('/users', usersController.index, usersController.indexView);
-router.get('/users/:id', usersController.show, usersController.showView);
 router.get('/users/new', usersController.new);
 router.post('/users/create', usersController.create, usersController.redirectView);
+router.get('/users/:id', usersController.show, usersController.showView);
 router.get('/users/:id/edit', usersController.edit);
 router.put('/users/:id/update', usersController.update, usersController.redirectView);
 router.delete('/users/:id/delete', usersController.delete, usersController.redirectView);

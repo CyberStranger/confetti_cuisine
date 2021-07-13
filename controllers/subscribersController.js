@@ -30,6 +30,7 @@ module.exports = {
             const subscriber = await Subscriber.create(subscriberParams);
             res.locals.redirect = '/subscribers';
             res.locals.subscriber = subscriber;
+            req.flash('success', 'Added a new subscriber');
             next();
         } catch (error) {
             console.log(`Cannot add new subscriber ${error.message}`);
@@ -74,6 +75,7 @@ module.exports = {
             });
             res.locals.redirect = `/subscribers/${subscriberId}`;
             res.locals.subscriber = subscriber;
+            req.flash('success', 'Successfully updated');
             next();
         } catch (error) {
             console.log(`Error updating subscriber by ID: ${error.message}`);
@@ -85,6 +87,7 @@ module.exports = {
         try {
             await Subscriber.findOneAndRemove(subscriberId);
             res.locals.redirect = '/subscribers';
+            req.flash('success', 'Subscriber has been deleted');
             next();
         } catch (error) {
             console.log(`Error deleting subscriber by ID: ${error.message}`);
