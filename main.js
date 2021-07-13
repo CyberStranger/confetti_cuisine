@@ -7,6 +7,9 @@ const express = require('express'),
     usersController = require('./controllers/usersController'),
     layouts = require('express-ejs-layouts'),
     mongoose = require('mongoose'),
+    expressSession = require('express-session'),
+    cookieParser = require('cookie-parser'),
+    connectFlash = require('connect-flash'),
     app = express();
 
 mongoose.connect(
@@ -19,6 +22,16 @@ mongoose.connect(
 router.use(methodOverride('_method', {
     methods: ['POST', 'GET']
 }));
+router.use(cookieParser('secret_passcode'));
+router.use(expressSession({
+    secret: 'secret_passcode',
+    cookie: {
+        maxAge: 4000000
+    },
+    resave: false,
+    saveUninitialized: false
+}));
+router.use(connectFlash());
 
 app.set('port', process.env.port || 3000);
 app.set('view engine', 'ejs');
@@ -60,5 +73,5 @@ app.listen(app.get('port'), () => {
     );
 });
 /* TODO: Переместить confetti_cuisine из Unit2 в директорию верхнего уровня
-* next page 266
+* next page 276
 */
