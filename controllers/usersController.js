@@ -1,4 +1,5 @@
-const User = require('../models/user');
+const User = require('../models/user'),
+  bcrypt = require('bcrypt');
 
 const getUserParams = body => {
   return {
@@ -45,7 +46,7 @@ module.exports = {
       console.log(`Error saving user: ${error.message}`);
       res.locals.redirect = '/users/new';
       req.flash(
-        'error', 
+        'error',
         `Failed to create user account because: ${error.message}.`);
       next();
     }
@@ -112,6 +113,39 @@ module.exports = {
     } catch (error) {
       console.log(`Error deleting user by ID: ${error.message}`);
       next();
+    }
+  },
+  login: (req, res) => {
+    res.render('users/login');
+  },
+  authenticate: async (req, res, next) => {
+    try {
+      const user = await User.findOne({
+        email: req.body.email
+      });
+      if (user) {
+        console.log(user)
+        let passwordsMatch = await user.passwordComparison(req.body.password);
+        if (passwordsMatch){
+          res.locals.redirect = `/users/${user._id}`;
+          req.flash('success', `${user.fullName}'s logged in successfully`);
+          res.locals.user = user;
+          next();
+        } else {
+          req.flash('error', 'Failed to log in user: account: incorrect password');
+          res.locals.redirect = '/users/login';
+          next();
+        }
+
+        
+      } else {
+        req.flash('error', 'Failed to log in user: account: User not found');
+        res.locals.redirect = '/users/login';
+        next();
+      }
+    } catch (error) {
+      console.log(`Error logging in user ${error.message}`);
+      next(error);
     }
   }
 }

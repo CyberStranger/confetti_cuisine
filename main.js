@@ -16,7 +16,8 @@ mongoose.connect(
     'mongodb://localhost:27017/confetti_cuisine', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useCreateIndex: true
+    useCreateIndex: true,
+    useFindAndModify: true
 });
 
 router.use(methodOverride('_method', {
@@ -52,6 +53,8 @@ app.get('/', (req, res) => {
 
 router.get('/users', usersController.index, usersController.indexView);
 router.get('/users/new', usersController.new);
+router.get('/users/login', usersController.login);
+router.post('/users/login', usersController.authenticate, usersController.redirectView);
 router.post('/users/create', usersController.create, usersController.redirectView);
 router.get('/users/:id', usersController.show, usersController.showView);
 router.get('/users/:id/edit', usersController.edit);
@@ -77,5 +80,5 @@ app.listen(app.get('port'), () => {
     );
 });
 /* TODO: Переместить confetti_cuisine из Unit2 в директорию верхнего уровня
-* next page 276
+* next page 283
 */
