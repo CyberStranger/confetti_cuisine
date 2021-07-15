@@ -1,4 +1,6 @@
 const User = require('../models/user'),
+  { body, validationResult } = require('express-validator'),
+  { sanitizeBody } = require('express-validator'),
   bcrypt = require('bcrypt');
 
 const getUserParams = body => {
@@ -126,7 +128,7 @@ module.exports = {
       if (user) {
         console.log(user)
         let passwordsMatch = await user.passwordComparison(req.body.password);
-        if (passwordsMatch){
+        if (passwordsMatch) {
           res.locals.redirect = `/users/${user._id}`;
           req.flash('success', `${user.fullName}'s logged in successfully`);
           res.locals.user = user;
@@ -137,7 +139,7 @@ module.exports = {
           next();
         }
 
-        
+
       } else {
         req.flash('error', 'Failed to log in user: account: User not found');
         res.locals.redirect = '/users/login';
@@ -146,6 +148,28 @@ module.exports = {
     } catch (error) {
       console.log(`Error logging in user ${error.message}`);
       next(error);
+    }
+  },
+  validate: async (req, res, next) => {
+    body('email', 'Email is invalid').isEmail().normalizeEmail({
+      all_lowercase: true
+    }).trim();
+    body('zipCode', 'Zip code is invalid')
+      .notEmpty().isInt().isLength({
+        min: 5,
+        max: 5
+      }).equals(req.body.zipCode);
+    body('password', 'Password cannot be empty').notEmpty();
+
+    const error = await validationResult(req);
+    if (!error.isEmpty()) {
+      let messages = error.array().map(e => e.msg);
+      req.skip = true;
+      req.flash('error', messages.join(' and '));
+      res.locals.redirect = '/users/new';
+      next();
+    } else {
+      next();
     }
   }
 }

@@ -55,7 +55,7 @@ router.get('/users', usersController.index, usersController.indexView);
 router.get('/users/new', usersController.new);
 router.get('/users/login', usersController.login);
 router.post('/users/login', usersController.authenticate, usersController.redirectView);
-router.post('/users/create', usersController.create, usersController.redirectView);
+router.post('/users/create', usersController.validate, usersController.create, usersController.redirectView);
 router.get('/users/:id', usersController.show, usersController.showView);
 router.get('/users/:id/edit', usersController.edit);
 router.put('/users/:id/update', usersController.update, usersController.redirectView);
@@ -80,5 +80,5 @@ app.listen(app.get('port'), () => {
     );
 });
 /* TODO: Переместить confetti_cuisine из Unit2 в директорию верхнего уровня
-* next page 283
+* next page 298
 */
