@@ -1,7 +1,8 @@
 const mongoose = require('mongoose'),
   { Schema } = mongoose,
-  bcrypt = require('bcrypt'),
-  Subscriber = require('./subscriber');
+  // bcrypt = require('bcrypt'),
+  Subscriber = require('./subscriber'),
+  passportLocalMongoose = require('passport-local-mongoose');
 
 userSchema = new Schema({
   name: {
@@ -25,10 +26,6 @@ userSchema = new Schema({
     min: [10000, 'Zip code too short'],
     max: 99999
   },
-  password: {
-    type: String,
-    required: true
-  },
   courses: [{ type: Schema.Types.ObjectId, ref: 'Course' }],
   subscribedAccount: { type: Schema.Types.ObjectId, ref: 'Subscriber' }
 }, {
@@ -41,18 +38,18 @@ userSchema.virtual('fullName')
   });
 
 
-userSchema.pre('save', async function (next) {
-  let user = this;
+// userSchema.pre('save', async function (next) {
+//   let user = this;
 
-  try {
-    const hash = await bcrypt.hash(user.password, 10);
-    user.password = hash;
-    next();
-  } catch (error) {
-    console.log(`Error in hashing password: ${error.message}`);
-    next(error);
-  }
-});
+//   try {
+//     const hash = await bcrypt.hash(user.password, 10);
+//     user.password = hash;
+//     next();
+//   } catch (error) {
+//     console.log(`Error in hashing password: ${error.message}`);
+//     next(error);
+//   }
+// });
 
 userSchema.pre('save', async function (next) {
   let user = this;
@@ -70,9 +67,13 @@ userSchema.pre('save', async function (next) {
   }
 });
 
-userSchema.methods.passwordComparison = function(inputPassword) {
-  let user = this;
-  return bcrypt.compare(inputPassword, user.password);
-}
+// userSchema.methods.passwordComparison = function(inputPassword) {
+//   let user = this;
+//   return bcrypt.compare(inputPassword, user.password);
+// }
+
+userSchema.plugin(passportLocalMongoose, {
+  usernameField: "email"
+});
 
 module.exports = mongoose.model('User', userSchema);

@@ -1,5 +1,6 @@
 const express = require('express'),
     router = express.Router(),
+    User = require('./models/user'),
     methodOverride = require('method-override'),
     homeController = require('./controllers/homeController'),
     errorController = require('./controllers/errorController'),
@@ -10,6 +11,7 @@ const express = require('express'),
     expressSession = require('express-session'),
     cookieParser = require('cookie-parser'),
     connectFlash = require('connect-flash'),
+    passport = require('passport'),
     app = express();
 
 mongoose.connect(
@@ -37,6 +39,12 @@ router.use((req, res, next) => {
     res.locals.flashMessages = req.flash();
     next();
 });
+router.use(passport.initialize());
+router.use(passport.session());
+
+passport.use(User.createStrategy());
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 app.set('port', process.env.port || 3000);
 app.set('view engine', 'ejs');
@@ -80,5 +88,5 @@ app.listen(app.get('port'), () => {
     );
 });
 /* TODO: Переместить confetti_cuisine из Unit2 в директорию верхнего уровня
-* next page 298
+* next page 304
 */

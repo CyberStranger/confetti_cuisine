@@ -10,7 +10,7 @@ const getUserParams = body => {
       last: body.last
     },
     email: body.email,
-    password: body.password,
+    // password: body.password,
     zipCode: body.zipCode
   }
 }
@@ -36,23 +36,20 @@ module.exports = {
     res.render('users/new')
   },
   create: async (req, res, next) => {
-    let userParams = getUserParams(req.body);
-
-    try {
-      const user = await User.create(userParams);
-      req.flash('success', `${user.fullName}'s account created successfully!`);
-      res.locals.redirect = "/users";
-      res.locals.user = user;
-      next();
-    } catch (error) {
-      console.log(`Error saving user: ${error.message}`);
-      res.locals.redirect = '/users/new';
-      req.flash(
-        'error',
-        `Failed to create user account because: ${error.message}.`);
-      next();
-    }
-
+    if(req.skip) next();
+    let newUser = new User(getUserParams(req.body));
+    User.register(newUser, req.body.password, (error, user) =>{
+      if (user){
+        req.flash("success", `${user.fullName}'s account created successfully`);
+        res.locals.redirect = '/users';
+        next();
+      } else {
+        req.flash("error", `Failed to create user account because: 
+          ${error.message}.`);
+        res.locals.redirect = '/users/new';
+        next();
+      }
+    })
   },
   redirectView: (req, res, next) => {
     let redirectPath = res.locals.redirect;

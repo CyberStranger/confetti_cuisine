@@ -13,23 +13,21 @@ try {
     console.log('something wrong with connection', error.message);
 }
 
-for (let i = 0; i < 15; i++) {
-    const user = new User({
-        name: {
-            first: faker.name.firstName(),
-            last: faker.name.lastName(),
-        },
-        email: faker.internet.email(),
-        zipCode: Math.floor(Math.random() * (99999 - 10000 +1)) + 10000,
-        password: faker.internet.password()
-    });
-    console.log(user);
-    (async () => {
-        try {
-            await user.save();
-        } catch (error) {
-            console.log(error)
-        }
-    })();
-}
-
+(async () => {
+    for (let i = 0; i < 15; i++) {
+        const user = await User.register({
+            name: {
+                first: faker.name.firstName(),
+                last: faker.name.lastName(),
+            },
+            email: faker.internet.email(),
+            zipCode: Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000,
+        }, faker.internet.password(), (error, user) => {
+            if (user) {
+                console.log(`User created successfully ${user}`);
+            } else {
+                console.log(`something went wrong ${error.message}`);
+            }
+        });
+    }
+})();
