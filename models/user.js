@@ -1,6 +1,5 @@
 const mongoose = require('mongoose'),
   { Schema } = mongoose,
-  // bcrypt = require('bcrypt'),
   Subscriber = require('./subscriber'),
   passportLocalMongoose = require('passport-local-mongoose');
 

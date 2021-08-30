@@ -11,6 +11,14 @@
 </head>
 
 <body>
+    <% if (loggedIn) { %>
+        Logged as <a href="<%= `/users/${currentUser._id}`%> ">
+            <%=currentUser.fullName %> 
+            <a href="/users/logout">Log Out</a>
+        </a>
+    <% } else { %>
+        <a href="/users/login">Log In</a>
+        <% } %>
     <div class="container flashes mt-3">
         <% if (flashMessages) { %>
             <% if (flashMessages.success) { %>
