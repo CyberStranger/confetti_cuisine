@@ -1,18 +1,13 @@
 const express = require('express'),
-    router = express.Router(),
+    router = require('./routes/index'),// express.Router(),
     User = require('./models/user'),
     methodOverride = require('method-override'),
-    homeController = require('./controllers/homeController'),
-    errorController = require('./controllers/errorController'),
-    subscribersController = require('./controllers/subscribersController'),
-    usersController = require('./controllers/usersController'),
     layouts = require('express-ejs-layouts'),
     mongoose = require('mongoose'),
     expressSession = require('express-session'),
     passport = require('passport'),
     cookieParser = require('cookie-parser'),
     connectFlash = require('connect-flash'),
-    // LocalStrategy = require('passport-local'),
     app = express();
 
 mongoose.connect(
@@ -23,16 +18,9 @@ mongoose.connect(
     useFindAndModify: true
 });
 
-router.use(methodOverride('_method', {
+app.use(methodOverride('_method', {
     methods: ['POST', 'GET']
 }));
-router.use(cookieParser('secret_passcode'));
-router.use(connectFlash());
-router.use((req, res, next) => {
-    res.locals.flashMessages = req.flash();
-    next();
-});
-
 
 app.use(expressSession({
     secret: 'secret_passcode',
@@ -45,6 +33,15 @@ app.use(expressSession({
     resave: false,
     saveUninitialized: true,
 }));
+
+app.use(cookieParser('secret_passcode'));
+app.use(connectFlash());
+app.use((req, res, next) => {
+    res.locals.flashMessages = req.flash();
+    next();
+});
+
+
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -71,33 +68,33 @@ app.use(layouts);
 app.use('/', router);
 
 
-app.get('/', (req, res) => {
-    res.send('Welcome to Confetti Cuisine');
-});
+// app.get('/', (req, res) => {
+//     res.send('Welcome to Confetti Cuisine');
+// });
 
-router.get('/users', usersController.index, usersController.indexView);
-router.get('/users/new', usersController.new);
-router.get('/users/login', usersController.login);
-router.post('/users/login', usersController.authenticate);
-router.get('/users/logout', usersController.logout, usersController.redirectView);
-router.post('/users/create', usersController.validate, usersController.create, usersController.redirectView);
-router.get('/users/:id', usersController.show, usersController.showView);
-router.get('/users/:id/edit', usersController.edit);
-router.put('/users/:id/update', usersController.update, usersController.redirectView);
-router.delete('/users/:id/delete', usersController.delete, usersController.redirectView);
+// router.get('/users', usersController.index, usersController.indexView);
+// router.get('/users/new', usersController.new);
+// router.get('/users/login', usersController.login);
+// router.post('/users/login', usersController.authenticate);
+// router.get('/users/logout', usersController.logout, usersController.redirectView);
+// router.post('/users/create', usersController.validate, usersController.create, usersController.redirectView);
+// router.get('/users/:id', usersController.show, usersController.showView);
+// router.get('/users/:id/edit', usersController.edit);
+// router.put('/users/:id/update', usersController.update, usersController.redirectView);
+// router.delete('/users/:id/delete', usersController.delete, usersController.redirectView);
 
-router.get('/courses', homeController.showCourses);
+// router.get('/courses', homeController.showCourses);
 
-router.get('/subscribers', subscribersController.index, subscribersController.indexView);
-router.get('/subscribers/new', subscribersController.new);
-router.post('/subscribers/create', subscribersController.create, subscribersController.redirectView);
-router.get('/subscribers/:id', subscribersController.show, subscribersController.showView);
-router.get('/subscribers/:id/edit', subscribersController.edit);
-router.put('/subscribers/:id/update', subscribersController.update, subscribersController.redirectView);
-router.delete('/subscribers/:id/delete', subscribersController.delete, subscribersController.redirectView);
+// router.get('/subscribers', subscribersController.index, subscribersController.indexView);
+// router.get('/subscribers/new', subscribersController.new);
+// router.post('/subscribers/create', subscribersController.create, subscribersController.redirectView);
+// router.get('/subscribers/:id', subscribersController.show, subscribersController.showView);
+// router.get('/subscribers/:id/edit', subscribersController.edit);
+// router.put('/subscribers/:id/update', subscribersController.update, subscribersController.redirectView);
+// router.delete('/subscribers/:id/delete', subscribersController.delete, subscribersController.redirectView);
 
-app.use(errorController.pageNotFoundError);
-app.use(errorController.internalServerError);
+// app.use(errorController.pageNotFoundError);
+// app.use(errorController.internalServerError);
 
 app.listen(app.get('port'), () => {
     console.log(
@@ -105,5 +102,5 @@ app.listen(app.get('port'), () => {
     );
 });
 /* TODO: Переместить confetti_cuisine из Unit2 в директорию верхнего уровня
-* next page 304
+* next page 326
 */
